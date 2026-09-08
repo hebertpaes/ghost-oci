@@ -1,0 +1,9 @@
+# chaves, credenciais e arquivos gerados localmente
+*.pem
+*.key
+oci_ghost*
+id_*
+.env
+*.tar.gz
+cloud-init-*.sh
+.DS_Store
