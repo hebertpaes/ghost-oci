@@ -2,7 +2,7 @@
 # =============================================================================
 #  Rodar no ORACLE CLOUD SHELL (ja autenticado como o dono do tenancy):
 #
-#    curl -fsSL https://raw.githubusercontent.com/hebertpaes/ghost-oci/main/deploy/oci-bootstrap.sh | bash
+#    curl -fsSL https://raw.githubusercontent.com/hebertpaes/comenta/main/deploy/oci-bootstrap.sh | bash
 #
 #  O que faz, sem precisar de senha nem de chave SSH:
 #   1. Libera TCP 80 e 443 (0.0.0.0/0) na Security List da sub-rede da instancia.
@@ -102,10 +102,9 @@ done
 cat <<TXT
 
 ============================================================
- Pronto. Agora o operador consegue entrar por SSH:
-   ssh -i ~/.ssh/oci_ghost ubuntu@${PUBIP}
- e instalar o Ghost com:
-   curl -fsSL https://raw.githubusercontent.com/hebertpaes/ghost-oci/main/install.sh \\
+ Pronto. Agora a chave SSH foi autorizada e as portas 80/443 liberadas!
+ Instale o Ghost na VM com:
+   curl -fsSL https://raw.githubusercontent.com/hebertpaes/comenta/main/install.sh \\
      | sudo DOMAIN=comenta.com.br EMAIL=contato@comenta.com.br bash
 ============================================================
 TXT
