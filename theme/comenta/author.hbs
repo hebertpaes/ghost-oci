@@ -1,0 +1,20 @@
+{{!< default}}
+
+<header class="archive-header outer">
+    <div class="inner">
+        {{#author}}
+            {{#if profile_image}}<img class="author-avatar" src="{{profile_image}}" alt="{{name}}">{{/if}}
+            <h1 class="archive-title">{{name}}</h1>
+            {{#if bio}}<p class="archive-desc">{{bio}}</p>{{/if}}
+            <span class="archive-count">{{plural ../pagination.total empty="Nenhum post" singular="% post" plural="% posts"}}</span>
+        {{/author}}
+    </div>
+</header>
+
+<div class="post-feed">
+    {{#foreach posts}}
+        {{> post-card}}
+    {{/foreach}}
+</div>
+
+{{pagination}}

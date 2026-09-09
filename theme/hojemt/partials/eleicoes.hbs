@@ -1,0 +1,19 @@
+{{!-- Faixa Eleições 2026: contagem regressiva para o 1º turno (04/10/2026) e
+      2º turno (25/10/2026) + link para a central de apuração /apuracao-2026/.
+      Liga/desliga em Settings → Design → eleicoes_ativa. A contagem e o estado
+      (faltam X dias / votação / apuração ao vivo) são calculados no main.js. --}}
+{{#if @custom.eleicoes_ativa}}
+<section class="eleicoes-banner container" aria-label="Eleições Gerais 2026">
+    <a class="eleicoes-link" href="{{@site.url}}/apuracao-2026/">
+        <div class="eleicoes-left">
+            <span class="eleicoes-kicker">🗳️ Eleições 2026</span>
+            <strong class="eleicoes-title" id="eleicoesTitulo">Apuração 1º e 2º Turno — País, Estados &amp; DF</strong>
+            <span class="eleicoes-sub">Presidente, Governadores e Senadores • Dados oficiais do TSE em tempo real</span>
+        </div>
+        <div class="eleicoes-right">
+            <span class="eleicoes-countdown" id="eleicoesCountdown" data-t1="2026-10-04T08:00:00-03:00" data-t2="2026-10-25T08:00:00-03:00">04/10 e 25/10</span>
+            <span class="eleicoes-cta">Acompanhe →</span>
+        </div>
+    </a>
+</section>
+{{/if}}

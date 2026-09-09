@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apuração Eleições 2026 • 1º e 2º Turno • Hoje MT</title>
+  <meta name="description" content="Apuração oficial das Eleições Gerais de 2026 em tempo real (dados TSE): Presidente da República, Governadores e Senadores de todos os estados e do Distrito Federal. 1º turno em 4 de outubro e 2º turno em 25 de outubro." />
+
+  <link rel="dns-prefetch" href="https://resultados.tse.jus.br" />
+  <link rel="preconnect" href="https://resultados.tse.jus.br" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #00a859;
+      --primary-hover: #008f4c;
+      --primary-dark: #062b1a;
+      --primary-light: #e6f7ef;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --info: #0284c7;
+      --bg: #ffffff;
+      --bg-alt: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+
+    [data-theme="dark"] {
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-light: #062b1a;
+      --bg: #09130e;
+      --bg-alt: #0e1c15;
+      --card-bg: #12241b;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #1c382b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-alt);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap { max-width: 980px; margin: 0 auto; padding: 16px 14px 40px; }
+
+    /* Cabeçalho */
+    .page-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 14px;
+    }
+    .page-title h1 {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.35rem; font-weight: 800; line-height: 1.2;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .page-title p { font-size: 0.8rem; color: var(--text-muted); margin-top: 3px; }
+    .live-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(16,185,129,0.14); color: var(--primary);
+      padding: 2px 8px; border-radius: 5px; font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+      100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+    }
+    .theme-btn {
+      background: var(--card-bg); color: var(--text); border: 1px solid var(--border);
+      width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+    }
+
+    /* Cards de turno */
+    .turnos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .turno-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 14px; cursor: pointer; transition: all 0.2s; position: relative;
+    }
+    .turno-card:hover { border-color: var(--primary); }
+    .turno-card.active { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary); }
+    .turno-label {
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--primary);
+    }
+    .turno-date { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 800; margin: 2px 0; }
+    .turno-status { font-size: 0.74rem; color: var(--text-muted); }
+    .turno-status strong { color: var(--text); font-family: 'JetBrains Mono', monospace; }
+    .turno-status .st-live { color: var(--danger); font-weight: 800; }
+    .turno-status .st-done { color: var(--primary); font-weight: 800; }
+
+    /* Abas de cargo */
+    .cargo-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .cargo-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border);
+      padding: 7px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .cargo-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .cargo-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+    /* Seletor de UF */
+    .uf-bar {
+      display: none; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px;
+    }
+    .uf-bar.show { display: flex; }
+    .uf-bar label { font-size: 0.76rem; font-weight: 700; color: var(--text-muted); }
+    .uf-bar select {
+      padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg-alt); color: var(--text); font-size: 0.82rem; font-weight: 600;
+    }
+
+    /* Painel de resultados */
+    .board {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; box-shadow: var(--shadow-md);
+    }
+    .board-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    .board-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 800; }
+    .board-meta { font-size: 0.72rem; color: var(--text-muted); text-align: right; }
+    .board-meta strong { color: var(--text); }
+
+    .sections-bar { margin: 8px 0 14px; }
+    .sections-bar .sb-label {
+      display: flex; justify-content: space-between; font-size: 0.72rem;
+      color: var(--text-muted); margin-bottom: 4px;
+    }
+    .sections-bar .sb-track { height: 8px; background: var(--bg-alt); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .sections-bar .sb-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #22c55e); width: 0%; transition: width 0.6s; }
+
+    .cand-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+    .cand-row:last-child { border-bottom: none; }
+    .cand-num {
+      width: 38px; height: 38px; border-radius: 8px; background: var(--bg-alt); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;
+    }
+    .cand-info { flex: 1; min-width: 0; }
+    .cand-name { font-weight: 800; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .cand-party { font-size: 0.68rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cand-bar-track { height: 7px; background: var(--bg-alt); border-radius: 4px; margin-top: 5px; overflow: hidden; }
+    .cand-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; width: 0%; transition: width 0.8s; }
+    .cand-row.leader .cand-bar-fill { background: linear-gradient(90deg, var(--primary), #22c55e); }
+    .cand-pct { text-align: right; flex-shrink: 0; min-width: 78px; }
+    .cand-pct .p { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1rem; }
+    .cand-pct .v { font-size: 0.66rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .badge-eleito {
+      background: var(--primary); color: #fff; font-size: 0.6rem; font-weight: 800;
+      padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .badge-2turno { background: var(--accent); color: #111; font-size: 0.6rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; }
+
+    .totais {
+      display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid var(--border); font-size: 0.72rem; color: var(--text-muted);
+    }
+    .totais strong { color: var(--text); font-family: 'JetBrains Mono', monospace; }
+
+    /* Estados vazios / avisos */
+    .state-box { text-align: center; padding: 28px 16px; }
+    .state-box .ico { font-size: 2rem; margin-bottom: 8px; }
+    .state-box h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; margin-bottom: 6px; }
+    .state-box p { font-size: 0.8rem; color: var(--text-muted); max-width: 520px; margin: 0 auto 6px; line-height: 1.5; }
+    .countdown {
+      display: flex; justify-content: center; gap: 10px; margin: 14px 0 6px;
+    }
+    .cd-cell {
+      background: var(--bg-alt); border: 1px solid var(--border); border-radius: 10px;
+      padding: 8px 12px; min-width: 64px;
+    }
+    .cd-cell b { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; font-weight: 800; }
+    .cd-cell span { font-size: 0.62rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; }
+    .btn-tse {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
+      background: var(--primary); color: #fff; text-decoration: none;
+      padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+    }
+    .btn-tse:hover { background: var(--primary-hover); }
+    .btn-tse.ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+
+    .note {
+      background: var(--primary-light); border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 12px; font-size: 0.74rem; color: var(--text-muted); margin-top: 14px; line-height: 1.5;
+    }
+    .note strong { color: var(--text); }
+
+    .foot {
+      margin-top: 16px; text-align: center; font-size: 0.7rem; color: var(--text-muted); line-height: 1.6;
+    }
+    .foot a { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+    /* Pesquisas eleitorais registradas no TSE */
+    .pesq-grupo { margin-bottom: 18px; }
+    .pesq-grupo-titulo {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.92rem; font-weight: 800;
+      margin: 10px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--primary);
+    }
+    .pesq-card {
+      background: var(--bg-alt); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; margin-bottom: 10px;
+    }
+    .pesq-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 6px;
+    }
+    .pesq-cargo { font-weight: 800; font-size: 0.9rem; }
+    .pesq-instituto { font-size: 0.72rem; color: var(--text-muted); }
+    .pesq-selo {
+      background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary);
+      font-size: 0.64rem; font-weight: 800; padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+    }
+    .pesq-cenario { margin-top: 8px; }
+    .pesq-cenario-titulo {
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px;
+      color: var(--text-muted); margin-bottom: 4px;
+    }
+    .pesq-extra {
+      background: rgba(245, 158, 11, 0.12); border: 1px solid var(--accent); border-radius: 8px;
+      padding: 6px 10px; font-size: 0.72rem; margin: 6px 0;
+    }
+    .pesq-legal {
+      margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border);
+      font-size: 0.68rem; color: var(--text-muted); line-height: 1.5;
+    }
+    .pesq-legal a { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+    @media (max-width: 640px) {
+      .turnos { grid-template-columns: 1fr; }
+      .cand-pct { min-width: 64px; }
+      .cand-num { width: 32px; height: 32px; font-size: 0.75rem; }
+      .page-title h1 { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="page-head">
+      <div class="page-title">
+        <h1>🗳️ Apuração Eleições 2026 <span class="live-tag"><span class="pulse-dot"></span> Dados TSE</span></h1>
+        <p>Presidente (Brasil), Governadores e Senadores — todos os estados e o Distrito Federal.</p>
+      </div>
+      <button class="theme-btn" id="themeBtn" title="Alternar modo claro/escuro" aria-label="Alternar tema">🌙</button>
+    </header>
+
+    <!-- Seleção de turno -->
+    <div class="turnos" role="tablist" aria-label="Turnos da eleição">
+      <div class="turno-card active" id="card-t1" role="tab" aria-selected="true" tabindex="0">
+        <div class="turno-label">1º Turno</div>
+        <div class="turno-date">4 de outubro de 2026</div>
+        <div class="turno-status" id="status-t1">—</div>
+      </div>
+      <div class="turno-card" id="card-t2" role="tab" aria-selected="false" tabindex="0">
+        <div class="turno-label">2º Turno</div>
+        <div class="turno-date">25 de outubro de 2026</div>
+        <div class="turno-status" id="status-t2">—</div>
+      </div>
+    </div>
+
+    <!-- Abas de cargo / abrangência -->
+    <nav class="cargo-nav" aria-label="Cargo em disputa">
+      <button class="cargo-btn active" data-cargo="presidente">🇧🇷 Presidente <small>(País)</small></button>
+      <button class="cargo-btn" data-cargo="governador">🏛️ Governador <small>(Estados &amp; DF)</small></button>
+      <button class="cargo-btn" data-cargo="senador">🏛️ Senador <small>(Estados &amp; DF)</small></button>
+      <button class="cargo-btn" data-cargo="municipios">🏙️ Municípios</button>
+      <button class="cargo-btn" data-cargo="pesquisas">📊 Pesquisas</button>
+    </nav>
+
+    <!-- Seletor de UF (para governador e senador) -->
+    <div class="uf-bar" id="ufBar">
+      <label for="ufSelect">Estado / Distrito Federal:</label>
+      <select id="ufSelect"></select>
+    </div>
+
+    <!-- Painel principal -->
+    <section class="board" id="board" aria-live="polite">
+      <div class="state-box">
+        <div class="ico">⏳</div>
+        <h3>Carregando…</h3>
+      </div>
+    </section>
+
+    <div class="note">
+      <strong>Sobre os dados:</strong> os resultados exibidos vêm diretamente da divulgação oficial do
+      <strong>TSE — Tribunal Superior Eleitoral</strong> (resultados.tse.jus.br) e são atualizados
+      automaticamente a cada 60 segundos durante a apuração. Este painel não publica projeções,
+      pesquisas nem números não oficiais. Eleições para <strong>Prefeito e Vereador</strong> não
+      ocorrem em 2026: as próximas eleições municipais serão em <strong>outubro de 2028</strong>.
+    </div>
+
+    <footer class="foot">
+      Fonte oficial: <a href="https://resultados.tse.jus.br" target="_blank" rel="noopener noreferrer">TSE — Divulgação de Resultados</a>
+      • Horário de votação: 8h às 17h (horário de Brasília) • Cobertura: <a href="/" >Hoje MT</a>
+    </footer>
+  </div>
+
+  <script src="js/pesquisas-2026.js"></script>
+  <script>
+    "use strict";
+
+    /* =====================================================================
+       CONFIGURAÇÃO TSE — ELEIÇÕES GERAIS 2026
+       Os códigos oficiais das eleições (usados nas URLs de resultado) são
+       publicados pelo TSE no ele-c.json pouco antes do pleito. Este painel
+       AUTO-DETECTA os códigos; se necessário, preencha manualmente abaixo.
+       ===================================================================== */
+    const TSE = {
+      base: "https://resultados.tse.jus.br/oficial",
+      configUrl: "https://resultados.tse.jus.br/oficial/comum/config/ele-c.json",
+      cycle: "ele2026",           // pasta do ciclo (ex.: ele2022, ele2024)
+      // Override manual (deixe "" para auto-detecção):
+      override: {
+        fed1t: "", fed2t: "",     // eleição federal (Presidente) 1º/2º turno
+        est1t: "", est2t: ""      // eleições estaduais (Gov/Sen) 1º/2º turno
+      }
+    };
+
+    // Datas oficiais (horário de Brasília, UTC-3): votação 8h–17h
+    const TURNOS = {
+      t1: { label: "1º turno", open: Date.parse("2026-10-04T08:00:00-03:00"), close: Date.parse("2026-10-04T17:00:00-03:00") },
+      t2: { label: "2º turno", open: Date.parse("2026-10-25T08:00:00-03:00"), close: Date.parse("2026-10-25T17:00:00-03:00") }
+    };
+
+    const CARGOS = { presidente: "1", governador: "3", senador: "5" };
+
+    const UFS = [
+      ["ac","Acre"],["al","Alagoas"],["ap","Amapá"],["am","Amazonas"],["ba","Bahia"],
+      ["ce","Ceará"],["df","Distrito Federal"],["es","Espírito Santo"],["go","Goiás"],
+      ["ma","Maranhão"],["mt","Mato Grosso"],["ms","Mato Grosso do Sul"],["mg","Minas Gerais"],
+      ["pa","Pará"],["pb","Paraíba"],["pr","Paraná"],["pe","Pernambuco"],["pi","Piauí"],
+      ["rj","Rio de Janeiro"],["rn","Rio Grande do Norte"],["rs","Rio Grande do Sul"],
+      ["ro","Rondônia"],["rr","Roraima"],["sc","Santa Catarina"],["sp","São Paulo"],
+      ["se","Sergipe"],["to","Tocantins"]
+    ];
+
+    // Estado da interface
+    let turnoAtual = "t1";
+    let cargoAtual = "presidente";
+    let ufAtual = localStorage.getItem("apuracao_uf") || "mt";
+    let codigos = { fed1t: "", fed2t: "", est1t: "", est2t: "" };
+    let pollTimer = null;
+
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    const fmtInt = (v) => {
+      const n = parseInt(String(v).replace(/\D/g, ""), 10);
+      return isNaN(n) ? "—" : n.toLocaleString("pt-BR");
+    };
+    const pctNum = (p) => parseFloat(String(p || "0").replace(",", ".")) || 0;
+
+    /* ---------------- Tema (sincronizado com o portal Hoje MT) ------------ */
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      $("themeBtn").textContent = t === "dark" ? "☀️" : "🌙";
+    }
+    applyTheme(localStorage.getItem("hojemt_theme") === "dark" ? "dark" : "light");
+    $("themeBtn").addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      localStorage.setItem("hojemt_theme", next);
+      applyTheme(next);
+    });
+
+    /* ---------------- Auto-detecção dos códigos TSE ----------------------- */
+    async function descobrirCodigos() {
+      // Overrides manuais têm prioridade
+      Object.assign(codigos, TSE.override);
+      if (codigos.fed1t && codigos.est1t) return;
+
+      try {
+        const res = await fetch(TSE.configUrl, { cache: "no-store" });
+        const cfg = await res.json();
+        if (cfg && typeof cfg.c === "string" && /2026/.test(cfg.c)) TSE.cycle = cfg.c;
+
+        for (const pl of (cfg.pl || [])) {
+          const dt = String(pl.dt || "");
+          const turno = dt === "04/10/2026" ? "1t" : dt === "25/10/2026" ? "2t" : null;
+          if (!turno) continue;
+
+          for (const el of (pl.e || [])) {
+            const nome = String(el.nm || "");
+            if (/suplementar|consulta/i.test(nome)) continue;
+            const abrs = el.abr || [];
+            const cargos = abrs.flatMap(a => (a.cp || []).map(c => String(c.cd)));
+            const temBR = abrs.some(a => String(a.cd).toLowerCase() === "br");
+
+            if (cargos.includes("1") && temBR && !codigos["fed" + turno]) codigos["fed" + turno] = String(el.cd);
+            if ((cargos.includes("3") || cargos.includes("5")) && !codigos["est" + turno]) codigos["est" + turno] = String(el.cd);
+          }
+        }
+      } catch (e) {
+        console.warn("Falha ao consultar configuração do TSE:", e);
+      }
+    }
+
+    /* ---------------- Busca de resultados --------------------------------- */
+    function urlResultado(ele, abr, cargo) {
+      const e6 = String(ele).padStart(6, "0");
+      const c4 = String(cargo).padStart(4, "0");
+      return `${TSE.base}/${TSE.cycle}/${ele}/dados-simplificados/${abr}/${abr}-c${c4}-e${e6}-r.json`;
+    }
+
+    async function buscarResultado() {
+      const cargoCd = CARGOS[cargoAtual];
+      const federal = cargoAtual === "presidente";
+      const ele = federal ? codigos["fed" + (turnoAtual === "t1" ? "1t" : "2t")]
+                          : codigos["est" + (turnoAtual === "t1" ? "1t" : "2t")];
+      if (!ele) return { fase: "sem-codigo" };
+
+      const abr = federal ? "br" : ufAtual;
+      const res = await fetch(urlResultado(ele, abr, cargoCd), { cache: "no-store" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return { fase: "dados", dados: await res.json() };
+    }
+
+    /* ---------------- Renderização ---------------------------------------- */
+    function faseDoTurno(t) {
+      const now = Date.now();
+      const T = TURNOS[t];
+      if (now < T.open) return "antes";
+      if (now < T.close) return "votacao";
+      return "apuracao";
+    }
+
+    function labelCargo() {
+      if (cargoAtual === "presidente") return "Presidente da República — Brasil";
+      const ufNome = (UFS.find(u => u[0] === ufAtual) || ["", ufAtual])[1];
+      return (cargoAtual === "governador" ? "Governador(a)" : "Senador(a)") + " — " + ufNome;
+    }
+
+    function renderContagem(target) {
+      const T = TURNOS[turnoAtual];
+      const diff = Math.max(0, T.open - Date.now());
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      target.innerHTML = `
+        <div class="state-box">
+          <div class="ico">🗳️</div>
+          <h3>Contagem regressiva para o ${TURNOS[turnoAtual].label}</h3>
+          <p>A votação do <strong>${TURNOS[turnoAtual].label}</strong> das Eleições Gerais 2026 acontece em
+             <strong>${turnoAtual === "t1" ? "4" : "25"} de outubro de 2026</strong>, das 8h às 17h (horário de Brasília).
+             A apuração oficial do TSE começa após o fechamento das urnas e aparecerá aqui automaticamente.</p>
+          <div class="countdown">
+            <div class="cd-cell"><b>${d}</b><span>dias</span></div>
+            <div class="cd-cell"><b>${String(h).padStart(2, "0")}</b><span>horas</span></div>
+            <div class="cd-cell"><b>${String(m).padStart(2, "0")}</b><span>min</span></div>
+          </div>
+          <a class="btn-tse ghost" href="/tag/politica/">📰 Cobertura eleitoral do Hoje MT →</a>
+        </div>`;
+    }
+
+    function renderVotacao(target) {
+      target.innerHTML = `
+        <div class="state-box">
+          <div class="ico">🗳️</div>
+          <h3>Votação em andamento — ${TURNOS[turnoAtual].label}</h3>
+          <p>As urnas estão abertas das 8h às 17h (horário de Brasília). A apuração oficial do TSE
+             começa após o encerramento da votação e será exibida aqui em tempo real.</p>
+          <a class="btn-tse" href="https://resultados.tse.jus.br" target="_blank" rel="noopener noreferrer">Portal oficial do TSE →</a>
+        </div>`;
+    }
+
+    function renderSemCodigo(target) {
+      target.innerHTML = `
+        <div class="state-box">
+          <div class="ico">📡</div>
+          <h3>Aguardando divulgação oficial do TSE</h3>
+          <p>O TSE ainda não publicou a configuração de dados das Eleições Gerais 2026
+             (ela é liberada próximo ao dia da eleição). Este painel verifica automaticamente
+             e começará a exibir a apuração assim que os dados oficiais estiverem disponíveis.</p>
+          <a class="btn-tse ghost" href="https://resultados.tse.jus.br" target="_blank" rel="noopener noreferrer">Acompanhar no portal do TSE →</a>
+        </div>`;
+    }
+
+    function renderErro(target) {
+      target.innerHTML = `
+        <div class="state-box">
+          <div class="ico">⚠️</div>
+          <h3>Não foi possível carregar a apuração agora</h3>
+          <p>O serviço de divulgação do TSE pode estar sobrecarregado. Nova tentativa automática em 60 segundos.</p>
+          <a class="btn-tse" href="https://resultados.tse.jus.br" target="_blank" rel="noopener noreferrer">Ver no portal oficial do TSE →</a>
+        </div>`;
+    }
+
+    function renderMunicipios(target) {
+      target.innerHTML = `
+        <div class="state-box">
+          <div class="ico">🏙️</div>
+          <h3>Municípios nas Eleições 2026</h3>
+          <p>Em 2026 <strong>não há eleição para Prefeito nem Vereador</strong> — as eleições gerais
+             elegem Presidente, Governadores, Senadores e Deputados. As próximas eleições municipais
+             serão em <strong>outubro de 2028</strong>.</p>
+          <p>Durante a apuração de 2026, os votos <strong>por município</strong> (inclusive de cada
+             cidade de Mato Grosso) podem ser consultados no painel oficial do TSE.
+             O Distrito Federal não possui municípios: lá se elege Governador, Senadores e Deputados Distritais.</p>
+          <a class="btn-tse" href="https://resultados.tse.jus.br" target="_blank" rel="noopener noreferrer">Consultar resultados por município (TSE) →</a>
+        </div>`;
+    }
+
+    /* ---------------- Pesquisas eleitorais registradas no TSE -------------- */
+    function rodapeLegal(p) {
+      return `Pesquisa registrada no TSE sob o nº <strong>${esc(p.registroTSE)}</strong>, ` +
+        `contratada por ${esc(p.contratante)} e realizada pelo instituto ${esc(p.instituto)} ` +
+        `no período de ${esc(p.periodo)}, com ${fmtInt(p.entrevistados)} entrevistados(as), ` +
+        `margem de erro de ±${esc(p.margem)} p.p. e nível de confiança de ${esc(p.confianca)}%.`;
+    }
+
+    function renderPesquisas(target) {
+      const todas = Array.isArray(window.PESQUISAS_2026) ? window.PESQUISAS_2026 : [];
+
+      // Regra 1: sem registro no TSE, não publica. Regra 2: só BR e MT
+      // (outras UFs apenas quando marcadas como extraordinárias, com justificativa).
+      const validas = todas.filter(p => {
+        if (!p || !String(p.registroTSE || "").trim()) {
+          if (p) console.warn("Pesquisa SEM registro TSE não será exibida:", p.id || p);
+          return false;
+        }
+        const uf = String(p.uf || "").toLowerCase();
+        if (uf === "br" || uf === "mt") return true;
+        return p.extraordinaria === true && String(p.notaExtraordinaria || "").trim() !== "";
+      });
+
+      if (!validas.length) {
+        target.innerHTML = `
+          <div class="state-box">
+            <div class="ico">📊</div>
+            <h3>Pesquisas Eleitorais 2026</h3>
+            <p>Nenhuma pesquisa eleitoral cadastrada para divulgação no momento.
+               Este portal publica exclusivamente pesquisas <strong>registradas no TSE</strong>
+               (Lei 9.504/97, art. 33), com foco no <strong>Brasil</strong> e em
+               <strong>Mato Grosso</strong>.</p>
+            <a class="btn-tse ghost" href="https://apps.tse.jus.br/pesqele-consulta/" target="_blank" rel="noopener noreferrer">Consultar registros de pesquisas no TSE →</a>
+          </div>`;
+        return;
+      }
+
+      const grupos = [
+        { chave: "br", titulo: "🇧🇷 Brasil — Presidente da República" },
+        { chave: "mt", titulo: "🏛️ Mato Grosso — Governo & Senado" },
+        { chave: "outras", titulo: "⚡ Destaques extraordinários — outros estados" }
+      ];
+
+      const blocos = grupos.map(g => {
+        const doGrupo = validas.filter(p => {
+          const uf = String(p.uf || "").toLowerCase();
+          return g.chave === "outras" ? (uf !== "br" && uf !== "mt") : uf === g.chave;
+        });
+        if (!doGrupo.length) return "";
+
+        const cards = doGrupo.map(p => {
+          const cenarios = (p.cenarios || []).map(c => {
+            const linhas = (c.resultados || []).map((r, i) => `
+              <div class="cand-row ${i === 0 ? "leader" : ""}">
+                <div class="cand-info">
+                  <div class="cand-name">${esc(r.nome)}</div>
+                  <div class="cand-bar-track"><div class="cand-bar-fill" style="width:${Math.min(100, Number(r.pct) || 0)}%"></div></div>
+                </div>
+                <div class="cand-pct"><div class="p">${esc(String(r.pct).replace(".", ","))}%</div></div>
+              </div>`).join("");
+            return `<div class="pesq-cenario"><div class="pesq-cenario-titulo">${esc(c.titulo)}</div>${linhas}</div>`;
+          }).join("");
+
+          const notaExtra = (String(p.uf).toLowerCase() !== "br" && String(p.uf).toLowerCase() !== "mt")
+            ? `<div class="pesq-extra">⚡ Divulgação extraordinária: ${esc(p.notaExtraordinaria)}</div>` : "";
+
+          return `
+            <article class="pesq-card">
+              <div class="pesq-head">
+                <div>
+                  <div class="pesq-cargo">${esc(p.cargo)}</div>
+                  <div class="pesq-instituto">${esc(p.instituto)} • divulgada em ${esc(p.dataDivulgacao)}</div>
+                </div>
+                <span class="pesq-selo">✔ Registro TSE ${esc(p.registroTSE)}</span>
+              </div>
+              ${notaExtra}
+              ${cenarios}
+              <div class="pesq-legal">${rodapeLegal(p)}
+                ${p.fonteUrl ? ` <a href="${esc(p.fonteUrl)}" target="_blank" rel="noopener noreferrer">Divulgação oficial →</a>` : ""}
+              </div>
+            </article>`;
+        }).join("");
+
+        return `<div class="pesq-grupo"><h3 class="pesq-grupo-titulo">${g.titulo}</h3>${cards}</div>`;
+      }).join("");
+
+      target.innerHTML = `
+        <div class="board-head">
+          <div class="board-title">📊 Pesquisas Eleitorais 2026 — registradas no TSE</div>
+          <div class="board-meta">Somente pesquisas com registro no TSE<br>(Lei 9.504/97, art. 33)</div>
+        </div>
+        ${blocos}
+        <div class="totais">
+          <span>Verifique qualquer registro na consulta pública:
+            <a href="https://apps.tse.jus.br/pesqele-consulta/" target="_blank" rel="noopener noreferrer" style="color:var(--primary);font-weight:700;">PesqEle / TSE →</a>
+          </span>
+        </div>`;
+    }
+
+    function renderDados(target, d) {
+      const cands = (d.cand || []).slice().sort((a, b) => pctNum(b.pvap) - pctNum(a.pvap));
+      const pst = pctNum(d.pst);
+      const linhas = cands.slice(0, 8).map((c, i) => {
+        const eleito = String(c.e).toLowerCase() === "s";
+        const st = String(c.st || "");
+        const badge = eleito ? `<span class="badge-eleito">${esc(st || "Eleito")}</span>`
+                    : /2º turno/i.test(st) ? `<span class="badge-2turno">2º turno</span>` : "";
+        return `
+          <div class="cand-row ${i === 0 ? "leader" : ""}">
+            <div class="cand-num">${esc(c.n)}</div>
+            <div class="cand-info">
+              <div class="cand-name">${esc(c.nm)} ${badge}</div>
+              <div class="cand-party" title="${esc(c.cc)}">${esc(c.cc)}</div>
+              <div class="cand-bar-track"><div class="cand-bar-fill" style="width:${Math.min(100, pctNum(c.pvap))}%"></div></div>
+            </div>
+            <div class="cand-pct">
+              <div class="p">${esc(c.pvap)}%</div>
+              <div class="v">${fmtInt(c.vap)} votos</div>
+            </div>
+          </div>`;
+      }).join("");
+
+      target.innerHTML = `
+        <div class="board-head">
+          <div class="board-title">${esc(labelCargo())} • ${TURNOS[turnoAtual].label}</div>
+          <div class="board-meta">Atualizado: <strong>${esc(d.dg)} ${esc(d.hg)}</strong><br>Fonte: TSE (oficial)</div>
+        </div>
+        <div class="sections-bar">
+          <div class="sb-label"><span>Seções totalizadas</span><span><strong>${esc(d.pst)}%</strong></span></div>
+          <div class="sb-track"><div class="sb-fill" style="width:${Math.min(100, pst)}%"></div></div>
+        </div>
+        ${linhas || '<div class="state-box"><p>Sem candidatos divulgados para esta disputa.</p></div>'}
+        <div class="totais">
+          <span>Votos válidos: <strong>${fmtInt(d.vv)}</strong></span>
+          <span>Brancos: <strong>${fmtInt(d.vb)}</strong></span>
+          <span>Nulos: <strong>${fmtInt(d.vn)}</strong></span>
+          ${pst >= 100 ? '<span style="color:var(--primary);font-weight:800;">✓ Totalização concluída</span>'
+                       : '<span class="st-live" style="color:var(--danger);font-weight:800;">● Apuração em andamento</span>'}
+        </div>`;
+    }
+
+    /* ---------------- Status dos cards de turno ---------------------------- */
+    function atualizarStatusTurnos() {
+      for (const t of ["t1", "t2"]) {
+        const el = $("status-" + t);
+        const fase = faseDoTurno(t);
+        if (fase === "antes") {
+          const diff = TURNOS[t].open - Date.now();
+          const d = Math.floor(diff / 86400000);
+          const h = Math.floor((diff % 86400000) / 3600000);
+          el.innerHTML = `Faltam <strong>${d}d ${String(h).padStart(2, "0")}h</strong>`;
+        } else if (fase === "votacao") {
+          el.innerHTML = `<span class="st-live">● Votação em andamento (8h–17h)</span>`;
+        } else {
+          el.innerHTML = `<span class="st-done">✓ Apuração / Resultados</span>`;
+        }
+      }
+    }
+
+    /* ---------------- Ciclo principal -------------------------------------- */
+    async function atualizarPainel() {
+      const board = $("board");
+
+      if (cargoAtual === "municipios") { renderMunicipios(board); return; }
+      if (cargoAtual === "pesquisas") { renderPesquisas(board); return; }
+
+      const fase = faseDoTurno(turnoAtual);
+      if (fase === "antes") { renderContagem(board); return; }
+      if (fase === "votacao") { renderVotacao(board); return; }
+
+      try {
+        if (!codigos.fed1t && !codigos.est1t) await descobrirCodigos();
+        const r = await buscarResultado();
+        if (r.fase === "sem-codigo") { renderSemCodigo(board); return; }
+        renderDados(board, r.dados);
+      } catch (e) {
+        console.warn("Erro na apuração:", e);
+        renderErro(board);
+      }
+    }
+
+    function agendarAtualizacao() {
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(() => {
+        atualizarStatusTurnos();
+        // Durante votação/apuração (e por 3 dias após), atualiza o painel também
+        const fim = TURNOS.t2.close + 3 * 86400000;
+        if (Date.now() < fim || faseDoTurno(turnoAtual) !== "antes") atualizarPainel();
+      }, 60000);
+    }
+
+    /* ---------------- Interações ------------------------------------------- */
+    function selecionarTurno(t) {
+      turnoAtual = t;
+      $("card-t1").classList.toggle("active", t === "t1");
+      $("card-t2").classList.toggle("active", t === "t2");
+      $("card-t1").setAttribute("aria-selected", t === "t1");
+      $("card-t2").setAttribute("aria-selected", t === "t2");
+      atualizarPainel();
+    }
+    $("card-t1").addEventListener("click", () => selecionarTurno("t1"));
+    $("card-t2").addEventListener("click", () => selecionarTurno("t2"));
+    $("card-t1").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") selecionarTurno("t1"); });
+    $("card-t2").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") selecionarTurno("t2"); });
+
+    document.querySelectorAll(".cargo-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".cargo-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        cargoAtual = btn.dataset.cargo;
+        $("ufBar").classList.toggle("show", cargoAtual === "governador" || cargoAtual === "senador");
+        atualizarPainel();
+      });
+    });
+
+    const sel = $("ufSelect");
+    sel.innerHTML = UFS.map(([cd, nome]) =>
+      `<option value="${cd}" ${cd === ufAtual ? "selected" : ""}>${nome} (${cd.toUpperCase()})</option>`).join("");
+    sel.addEventListener("change", () => {
+      ufAtual = sel.value;
+      localStorage.setItem("apuracao_uf", ufAtual);
+      atualizarPainel();
+    });
+
+    /* ---------------- Boot -------------------------------------------------- */
+    atualizarStatusTurnos();
+    descobrirCodigos().finally(atualizarPainel);
+    agendarAtualizacao();
+    setInterval(atualizarStatusTurnos, 30000);
+  </script>
+</body>
+</html>

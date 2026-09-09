@@ -1,0 +1,23 @@
+{{!-- Fallback institucional das zonas de publicidade: banner da casa enviado
+      em Design (banner_casa) ou, na ausência dele, o cartão "Anuncie aqui".
+      O clique abre o WhatsApp comercial da redação (whatsapp_redacao). --}}
+{{#if @custom.banner_casa}}
+    <a class="ad-banner ad-house-custom" href="https://wa.me/{{@custom.whatsapp_redacao}}?text=Quero%20anunciar%20no%20portal%20{{@site.title}}." target="_blank" rel="noopener" aria-label="Anuncie no {{@site.title}}">
+        <img class="ad-house-img" src="{{@custom.banner_casa}}" alt="Anuncie no {{@site.title}}" loading="lazy" />
+    </a>
+{{else}}
+    {{!-- Banner Institucional Ultra-Limpo & Responsivo no Design USA TODAY --}}
+    <a class="ad-banner ad-house-card-modern" href="https://wa.me/{{@custom.whatsapp_redacao}}?text=Olá,%20gostaria%20de%20receber%20o%20Mídia%20Kit%20e%20anunciar%20no%20Hoje%20MT." target="_blank" rel="noopener" aria-label="Anuncie no Hoje MT">
+        <div class="ad-house-left">
+            <div class="ad-house-badge-icon">📣</div>
+            <div class="ad-house-info">
+                <div class="ad-house-pill">ESPAÇO PUBLICITÁRIO · MÍDIA KIT 2026</div>
+                <h3 class="ad-house-title">Sua marca em destaque para milhares de leitores em Mato Grosso</h3>
+                <p class="ad-house-desc">Formatos digitais de alto impacto em Cuiabá, Várzea Grande e todo o Estado.</p>
+            </div>
+        </div>
+        <div class="ad-house-right">
+            <span class="ad-house-btn">ANUNCIE AQUI →</span>
+        </div>
+    </a>
+{{/if}}

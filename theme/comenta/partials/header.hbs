@@ -1,0 +1,33 @@
+<header class="site-header outer">
+    <div class="inner">
+        <div class="site-header-content">
+            <a class="site-brand" href="{{@site.url}}">
+                {{#if @site.logo}}
+                    <img class="site-logo" src="{{@site.logo}}" alt="{{@site.title}}">
+                {{else}}
+                    <span class="site-brand-mark" aria-hidden="true">C</span>
+                    <span class="site-brand-name">{{@site.title}}</span>
+                {{/if}}
+            </a>
+
+            <nav class="site-nav">
+                <ul class="nav">
+                    {{navigation}}
+                </ul>
+            </nav>
+
+            <button class="nav-toggle" aria-label="Menu" type="button">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+
+        {{#is "home"}}
+            <div class="site-hero">
+                <h1 class="site-hero-title">{{@site.title}}</h1>
+                {{#if @site.description}}
+                    <p class="site-hero-desc">{{@site.description}}</p>
+                {{/if}}
+            </div>
+        {{/is}}
+    </div>
+</header>
