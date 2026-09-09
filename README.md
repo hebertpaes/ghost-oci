@@ -36,6 +36,18 @@ sudo tail -f /var/log/ghost-install.log
 
 O script e idempotente: se algo falhar no meio (rede, lock do apt), rode o mesmo comando de novo. Ele nao duplica regras de firewall, reaproveita a senha ja gerada e pula o `ghost install` se ja existir.
 
+## Criar a VM em um comando (Cloud Shell)
+
+Alternativa ao formulario do console: [`oci-launch.sh`](oci-launch.sh) usa a OCI CLI para criar tudo. Abra o **Cloud Shell** (icone de terminal no topo do console, com a regiao certa selecionada) e rode:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/hebertpaes/ghost-oci/main/oci-launch.sh | bash -s -- SEU-DOMINIO seu@email.com
+```
+
+O script localiza a VCN `vcn-ghost` (crie antes com **Networking > Start VCN Wizard > Create VCN with Internet Connectivity**), cria o Network Security Group `ghost-web` liberando TCP 80/443, cria a instancia `ghost-comenta` (Ubuntu 24.04, VM.Standard.E5.Flex 1 OCPU / 12 GB) com a chave SSH de [`authorized_keys`](authorized_keys) e um cloud-init que executa o `install.sh`, espera ficar `RUNNING` e imprime o IP publico. E idempotente: rodar de novo reaproveita o que ja existe.
+
+Troque a chave SSH editando `authorized_keys` (sua chave publica) ou passando `SSH_PUB='ssh-ed25519 AAAA...'`. Outras variaveis: `NAME`, `VCN_NAME`, `SHAPE`, `OCPUS`, `MEM_GB`, `AD`, `COMPARTMENT_ID`, `REGION`. Precisa das permissoes IAM da secao [Permissoes necessarias](#permissoes-necessarias) mais `Allow group ... to use cloud-shell in tenancy`.
+
 ## Criar a VM na OCI (console web)
 
 Testado com **VM.Standard.E5.Flex (AMD), 1 OCPU, 12 GB**, Ubuntu 24.04, regiao Brazil East (Sao Paulo). Esse shape nao e "Always Free" (custa cerca de US$ 0,04/hora); a alternativa gratuita e o shape ARM **VM.Standard.A1.Flex** (ate 4 OCPU / 24 GB no Always Free), que tambem funciona com este script.
@@ -181,6 +193,8 @@ sudo nginx -t && sudo systemctl reload nginx
 | Arquivo | Funcao |
 |---|---|
 | [`install.sh`](install.sh) | Instalador completo (um comando) |
+| [`oci-launch.sh`](oci-launch.sh) | Cria a VM na OCI pela CLI (Cloud Shell), com NSG 80/443 e cloud-init |
+| [`authorized_keys`](authorized_keys) | Chave publica SSH usada pelo `oci-launch.sh` |
 | [`cloud-init.example.sh`](cloud-init.example.sh) | Script de inicializacao para colar no console da OCI |
 | [`backup.sh`](backup.sh) | Backup do banco + conteudo (instalado como `ghost-backup`) |
 | [`restore.sh`](restore.sh) | Restauracao de um backup (instalado como `ghost-restore`) |
